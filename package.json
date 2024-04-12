@@ -1,0 +1,20 @@
+{
+  "name": "yno-web-booster",
+  "version": "0.0.1",
+  "description": "an unofficial YNOproject games client",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Exsper",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "electron": "^29.3.0",
+    "electron-builder": "^24.13.3"
+  }
+}
