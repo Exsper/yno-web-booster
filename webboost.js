@@ -1,30 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 
-async function exfetch(url) {
-    let stat = 0;
+async function exfetch(url, retryCount = 0) {
     let TIMEOUT = 60000;
     let controller = new AbortController();
-    let response = await fetch(url, {signal: controller.signal});
-    let timer = setTimeout(() => {
-        if (stat === 1) return;
-        console.log("超时，检查缓存");
-        let mds = response.headers.get("Last-Modified");
-        let fileDate = new Date(mds);
-        let cache = getCache(url, fileDate);
-        if (!cache) {
-            console.log("使用缓存替代");
-            stat = 1;
-            controller.abort();
-            return cache;
-        }
-        else {
-            console.log("无缓存，继续下载");
-            stat = 0;
-        }
+    let response = await fetch(url, { signal: controller.signal });
+    let timer = setTimeout(async () => {
+        controller.abort();
+        return await exfetch(url, retryCount + 1);
     }, TIMEOUT);
     let content = await response.text();
-    stat = 1;
     clearTimeout(timer);
     timer = null;
     return content;
