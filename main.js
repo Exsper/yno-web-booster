@@ -63,46 +63,52 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) win = createWindow();
     });
 
-    win.webContents.session.protocol.handle("ywbf", (request) => {
-        const filePath = request.url.slice("ywbf://".length);
-        // return net.fetch(url.pathToFileURL(path.join(app.getAppPath(), "cache", filePath)));
-        return net.fetch(url.pathToFileURL(path.join(process.cwd(), "cache", filePath)));
-    });
 
-    win.webContents.session.webRequest.onHeadersReceived(async (details, callback) => {
-        let durl = details.url;
-        if (!webBoost.isCacheSource(durl)) {
-            callback(details);
-            return;
-        }
-
-        let headers = details.responseHeaders;
-        let lastModified = headers["last-modified"];
-        if (!lastModified) {
-            callback(details);
-            return;
-        }
-        let webFileDate = new Date(lastModified[0]);
-
-        let filePath = new url.URL(durl).pathname;
-        // const fileurl = url.pathToFileURL(path.join(app.getAppPath(), "cache", filePath));
+    win.webContents.session.protocol.handle("ywbf", async (request) => {
+        const urlPath = request.url.slice("ywbf://".length);
+        let realurl = "https://" + urlPath;
+        let filePath = new url.URL(request.url).pathname;
         const fileurl = url.pathToFileURL(path.join(process.cwd(), "cache", filePath));
         filePath = fileurl.pathname.substring(1);
-
+        const ses = session.fromPartition("ywbfses");
         try {
-            let localFileRequest = await net.fetch(fileurl);
+            let localFileRequest = await ses.fetch(fileurl);
+            console.log("尝试读取本地: " + fileurl);
             let localFileLastModified = localFileRequest.headers.get("last-modified");
             let localFileDate = new Date(localFileLastModified);
+            console.log(fileurl + " 本地时间: " + localFileDate.getFullYear() + "-" + localFileDate.getMonth() + "-" + localFileDate.getDate());
+
+            let response = await ses.fetch(realurl, {
+                method: 'HEAD'
+            });
+            let mds = response.headers.get("Last-Modified");
+            if (!mds) throw realurl + " 远端文件无Last-Modified";
+            let webFileDate = new Date(mds);
+            console.log(fileurl + " 网络时间: " + webFileDate.getFullYear() + "-" + webFileDate.getMonth() + "-" + webFileDate.getDate());
             let span = localFileDate.getTime() - webFileDate.getTime();
-            if (span >= 0) callback({ cancel: false, redirectURL: fileurl.href });
-            else throw "本地文件过期";
+            if (span < 0) throw fileurl + "本地文件过期";
+            console.log("使用本地文件:" + fileurl);
+            return localFileRequest;
         }
         catch (ex) {
-            //console.log(ex)
-            let webFile = await webBoost.exfetch(durl);
+            console.log(ex.name + ":" + fileurl);
+            let webResponse = await ses.fetch(realurl);
+            let webFile = await webResponse.clone().arrayBuffer();
             await webBoost.writeFile(filePath, webFile);
-            callback({ cancel: false, redirectURL: fileurl.href });
+            return webResponse;
         }
+    });
+
+
+    win.webContents.session.webRequest.onBeforeRequest(async (details, callback) => {
+        let durl = details.url;
+        if (!webBoost.isCacheSource(durl)) {
+            callback({ cancel: false });
+            return;
+        }
+
+        let ywbfurl = "ywbf://" + new url.URL(durl).href.replace(/^([a-z]+:)(\/){2,}/i, '');
+        callback({ redirectURL: ywbfurl });
         return;
     });
 });

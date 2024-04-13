@@ -1,20 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-async function exfetch(url, retryCount = 0) {
-    let TIMEOUT = 60000;
-    let controller = new AbortController();
-    let response = await fetch(url, { signal: controller.signal });
-    let timer = setTimeout(async () => {
-        controller.abort();
-        return await exfetch(url, retryCount + 1);
-    }, TIMEOUT);
-    let content = await response.text();
-    clearTimeout(timer);
-    timer = null;
-    return content;
-}
-
 /**
  * 是否为可缓存资源
  * @param {string} url
@@ -90,6 +76,7 @@ async function mkdirs(dirname) {
 
 // 写入本地文件
 async function writeFile(to, data, encoding = 'binary') {
+    data = encodeData(data);
     await mkdirs(path.dirname(to));
     return new Promise((resolve, reject) => {
         fs.writeFile(to, data, { encoding: encoding }, err => {
@@ -111,4 +98,4 @@ function encodeData(data, encoding = 'binary') {
 
 module.exports.isCacheSource = isCacheSource;
 module.exports.writeFile = writeFile;
-module.exports.exfetch = exfetch;
+// module.exports.exfetch = exfetch;
