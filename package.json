@@ -10,6 +10,18 @@
   },
   "author": "Exsper",
   "license": "MIT",
+  "build": {
+    "win": {
+      "target": [
+        "zip",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "dependencies": {
     "electron-store": "^8.2.0"
   },
