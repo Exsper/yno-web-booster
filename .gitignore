@@ -343,3 +343,4 @@ healthchecksdb
 # cache
 cache/
 dist/
+test/
