@@ -234,7 +234,7 @@ app.whenReady().then(() => {
         const urlPath = request.url.slice("ywbf://".length);
         let realurl = "https://" + urlPath;
         let requrl = new url.URL(request.url);
-        let filePath = requrl.hostname + requrl.pathname;
+        let filePath = (requrl.hostname + requrl.pathname).replace(/[@%]/g, '')
         const fileurl = url.pathToFileURL(path.join(process.cwd(), "cache", filePath));
         filePath = fileurl.pathname.substring(1);
         const ses = session.fromPartition("ywbfses");
@@ -262,7 +262,7 @@ app.whenReady().then(() => {
             return localFileRequest;
         }
         catch (ex) {
-            console.log(ex.name + ":" + fileurl);
+            console.log(fileurl + ": " + ex);
             console.log("从网络获取 " + realurl);
             let webResponse = await ses.fetch(realurl);
             let statusCode = webResponse.status;
