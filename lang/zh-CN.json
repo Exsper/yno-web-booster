@@ -1,0 +1,29 @@
+{
+    "name": "简体中文",
+    "code": "zh-Hans-CN",
+
+    "language": "语言",
+
+    "button_yes": "确定",
+    "button_no": "取消",
+
+    "menu_file": "文件",
+    "menu_file_close": "关闭窗口",
+
+    "window": "窗口",
+    "window_new": "打开新窗口",
+    "window_onTop": "置顶",
+    "window_fullScreen": "全屏",
+
+    "game": "游戏",
+    "game_forceLang": "设置页面语言 部分游戏必须设为英文",
+    "game_forceReconnect": "强制重连",
+    "game_openCacheFolder": "打开本地缓存文件夹",
+    "game_removeData": "清空本地数据",
+    "game_removeDataConfirm": "即将清空所有本地数据，包括登录信息和存档，请确保已经做好备份。\n按下“确定”键以继续。",
+
+    "dev": "开发",
+    "dev_reload": "重新加载网页",
+    "dev_devTools": "开发者工具"
+  }
+  

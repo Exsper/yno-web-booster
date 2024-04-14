@@ -1,0 +1,29 @@
+{
+    "name": "English",
+    "code": "en-US",
+
+    "language": "Language",
+
+    "button_yes": "Yes",
+    "button_no": "No",
+
+    "menu_file": "File",
+    "menu_file_close": "Close",
+
+    "window": "Window",
+    "window_new": "New Window",
+    "window_onTop": "Always On Top",
+    "window_fullScreen": "Full Screen",
+
+    "game": "Game",
+    "game_forceLang": "Set Webpage Language",
+    "game_forceReconnect": "Force Reconnect",
+    "game_openCacheFolder": "Open Cache Folder",
+    "game_removeData": "Remove Data",
+    "game_removeDataConfirm": "It will remove all data including login and save data.\nPress 'Yes' to continue.",
+
+    "dev": "Develop",
+    "dev_reload": "Reload Webpage",
+    "dev_devTools": "Dev Tools"
+  }
+  
