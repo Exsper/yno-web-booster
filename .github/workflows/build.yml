@@ -3,7 +3,10 @@ name: Build/release
 permissions:
   contents: write
 
-on: push
+on:
+  push:
+    tags:
+      - v**
 
 jobs:
   release:
