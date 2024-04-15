@@ -11,6 +11,10 @@
   "author": "Exsper",
   "license": "MIT",
   "build": {
+    "extraResources": {
+      "from": "./extraResources/",
+      "to": "../"
+    },
     "win": {
       "target": [
         "zip",
