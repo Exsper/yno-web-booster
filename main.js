@@ -232,7 +232,8 @@ app.whenReady().then(() => {
 
     protocol.handle("ywbf", async (request) => {
         const urlPath = request.url.slice("ywbf://".length);
-        let realurl = "https://" + urlPath;
+        let ptc = urlPath.substring(0, urlPath.indexOf("."));
+        let realurl = ptc + "://" + urlPath.substring(ptc.length + 1);
         let requrl = new url.URL(request.url);
         let filePath = (requrl.hostname + requrl.pathname).replace(/[@%]/g, '')
         const fileurl = url.pathToFileURL(path.join(process.cwd(), "cache", filePath));
@@ -252,7 +253,7 @@ app.whenReady().then(() => {
                 method: 'HEAD'
             });
             let mds = response.headers.get("Last-Modified");
-            if (!mds) throw realurl + " 远端文件无Last-Modified";
+            if (!mds) throw " 远端文件无Last-Modified：" + realurl;
             let webFileDate = new Date(mds);
             // console.log(realurl + " 网络时间: " + webFileDate.getFullYear() + "-" + (webFileDate.getMonth() + 1) + "-" + webFileDate.getDate());
             let span = localFileDate.getTime() - webFileDate.getTime();
@@ -285,7 +286,7 @@ app.whenReady().then(() => {
             return;
         }
 
-        let ywbfurl = "ywbf://" + new url.URL(durl).href.replace(/^([a-z]+:)(\/){2,}/i, '');
+        let ywbfurl = "ywbf://" + new url.URL(durl).href.replace(/^([a-z]+):(\/){2,}/i, '$1.');
         callback({ redirectURL: ywbfurl });
         return;
     });
